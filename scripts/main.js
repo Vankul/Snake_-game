@@ -39,9 +39,6 @@ function drawGame() {
     ctx.font = "50px sans-serif";
     ctx.fillText(score, tile * 2.5 , tile * 1.75);
 
-
-    
-
     if (score > 5) {
         clearInterval(snakeGame);
         snakeGame = setInterval(drawGame, 100);
@@ -55,7 +52,7 @@ function drawGame() {
             x: Math.floor((Math.random() * 17 + 1)) * tile,
             y: Math.floor((Math.random() * 15 + 3)) * tile
         }
-    }else{
+    } else{
         snake.pop();
     }
 
