@@ -1,15 +1,16 @@
 const canvas = document.getElementById("snake-game");
 const ctx = canvas.getContext("2d");
-
 const groundImg = new Image();
 groundImg.src = "/assets/img/ground.png";
 const fruitImg = new Image();
 fruitImg.src = "/assets/img/fruit.png";
+
+let temp;
 let tile = 32;
 let score = 0;
 let lose = false;
 let bscore = 0;
-let poits = document.getElementById("score"); 
+
 document.addEventListener("keydown", moving);
 document.addEventListener("keydown", restart);
 
@@ -85,8 +86,6 @@ function drawGame() {
     ctx.fillText(bscore, tile * 10.5 , tile * 1.5);
     
 }
-
-let temp;
 
 function moving(event){
     if(event.keyCode == 37 && temp != "right"){
