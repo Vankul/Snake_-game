@@ -11,9 +11,9 @@ let temp;
 let snakeX;
 let snakeY;
 let newHead;
-let fruit = newFruit();
+let fruit = cretateFruit();
 let snake = createSnake();
-let snakeGame = setInterval(drawGame, 100);
+let snakeGame;
 
 function drawGame() {
     // Рисуем поле
@@ -29,7 +29,7 @@ function drawGame() {
     // Змея вышла за поле
     outOfBounds();
     // Новое положение головы
-    nextPositionHead();
+    newHead = nextPositionHead();
     // Змея съела себя
     checkSnakeBiteSelf(newHead, snake);
     // Добавляем голову змеи
@@ -55,7 +55,7 @@ function createSnake(){
     return [createSnakeBlock()];
 }
 
-function newFruit(){
+function cretateFruit(){
     return {
         x : Math.floor((Math.random() * 17 + 1)) * tile,
         y : Math.floor((Math.random() * 15 + 3)) * tile,
@@ -126,7 +126,7 @@ function nextPositionHead(){
     if (temp == "right") snakeX += tile;
     if (temp == "top") snakeY -= tile;
     if (temp == "buttom") snakeY += tile;
-    newHead = {
+    return {
         x: snakeX,
         y: snakeY
     }
@@ -144,7 +144,7 @@ function checkSnakeEatFruit(snake){
     snakeY = snake[0].y;
     if (snakeX == fruit.x && snakeY == fruit.y){
         score++;
-        fruit = newFruit();
+        fruit = cretateFruit();
     } else{
         snake.pop();
     }
@@ -152,3 +152,4 @@ function checkSnakeEatFruit(snake){
 
 document.addEventListener("keydown", moving);
 document.addEventListener("keydown", restart);
+snakeGame = setInterval(drawGame, 100);
