@@ -56,7 +56,6 @@ function createSnake(){
 }
 
 function newFruit(){
-    
     return {
         x : Math.floor((Math.random() * 17 + 1)) * tile,
         y : Math.floor((Math.random() * 15 + 3)) * tile,
