@@ -12,8 +12,8 @@ let snakeX;
 let snakeY;
 let newHead;
 let fruit = newFruit();
-let snake;
-createSnake();
+let snake = createSnake();
+let snakeGame = setInterval(drawGame, 100);
 
 function drawGame() {
     // Рисуем поле
@@ -25,37 +25,42 @@ function drawGame() {
     // Рисуем змею
     drawSnake(snake);
     // Змея съела фрукт
-    eatFruit(snake, fruit);
+    checkSnakeEatFruit(snake);
     // Змея вышла за поле
     outOfBounds();
     // Новое положение головы
     nextPositionHead();
     // Змея съела себя
-    eatSnake(newHead, snake);
+    checkSnakeBiteSelf(newHead, snake);
     // Добавляем голову змеи
     snake.unshift(newHead);
     // Выводим лучший счет
     drawBestScore();
 }
 
-function createImg(srcc){
+function createImg(src){
     let img = new Image();
-    img.src = srcc;
+    img.src = src;
     return img;
 }
 
-function createSnake(){
-    snake = [];
-    snake[0] = {
+function createSnakeBlock(){
+    return {
         x: 9* tile,
         y: 10 * tile
-    } 
+    };
+}
+
+function createSnake(){
+    return [createSnakeBlock()];
 }
 
 function newFruit(){
-    this.x = Math.floor((Math.random() * 17 + 1)) * tile;
-    this.y = Math.floor((Math.random() * 15 + 3)) * tile;
-    return this;
+    
+    return {
+        x : Math.floor((Math.random() * 17 + 1)) * tile,
+        y : Math.floor((Math.random() * 15 + 3)) * tile,
+    }
 }
 
 function moving(event){
@@ -73,7 +78,7 @@ function moving(event){
     }
 }
 
-function eatSnake(head, other){
+function checkSnakeBiteSelf(head, other){
     for(let i = 0; i < other.length; i++){
         if(head.x == other[i].x && head.y == other[i].y){
             loseGame();
@@ -86,7 +91,7 @@ function restart(event){
         lose = false;
         score = 0;
         temp = 0;
-        createSnake();   
+        snake = createSnake();   
         snakeGame = setInterval(drawGame, 100);
     }
 }
@@ -135,7 +140,7 @@ function drawSnake(snake){
     }
 }
 
-function eatFruit(snake, fruit){
+function checkSnakeEatFruit(snake){
     snakeX = snake[0].x;
     snakeY = snake[0].y;
     if (snakeX == fruit.x && snakeY == fruit.y){
@@ -148,4 +153,3 @@ function eatFruit(snake, fruit){
 
 document.addEventListener("keydown", moving);
 document.addEventListener("keydown", restart);
-let snakeGame = setInterval(drawGame, 100);
