@@ -1,10 +1,8 @@
 const canvas = document.getElementById("snake-game");
 const ctx = canvas.getContext("2d");
 
-const groundImg = new Image();
-groundImg.src = "/assets/img/ground.png";
-const fruitImg = new Image();
-fruitImg.src = "/assets/img/fruit.png";
+const groundImg = createImg("/assets/img/ground.png");
+const fruitImg = createImg("/assets/img/fruit.png");
 let tile = 32;
 let score = 0;
 let lose = false;
@@ -12,20 +10,10 @@ let bscore = 0;
 let temp;
 let snakeX;
 let snakeY;
-let poits = document.getElementById("score"); 
-document.addEventListener("keydown", moving);
-document.addEventListener("keydown", restart);
-
-let fruit = {
-    x: Math.floor((Math.random() * 17 + 1)) * tile,
-    y: Math.floor((Math.random() * 15 + 3)) * tile
-}
-
-let snake = [];
-snake[0] = {
-    x: 9* tile,
-    y: 10 * tile
-}
+let newHead;
+let fruit = newFruit();
+let snake;
+createSnake();
 
 function drawGame() {
     // Рисуем поле
@@ -35,36 +23,40 @@ function drawGame() {
     // Рисуем счет
     drawScore();
     // Рисуем змею
-    for(let i = 0; i < snake.length; i++){
-        drawSnake(snake[i].x, snake[i].y, i);
-    }
-    // Увеличиваем темп
-    if (score > 5) {
-        speedUp();
-    }
+    drawSnake(snake);
     // Змея съела фрукт
-    fruit = eatFruit(snake, fruit);
+    eatFruit(snake, fruit);
     // Змея вышла за поле
-    if (snakeX < tile || snakeX > tile * 17 
-        || snakeY < 3 * tile || snakeY > 17 * tile) {
-            loseGame();
-    }
+    outOfBounds();
     // Новое положение головы
     nextPositionHead();
-    let newHead = {
-        x: snakeX,
-        y: snakeY
-    }
     // Змея съела себя
     eatSnake(newHead, snake);
     // Добавляем голову змеи
     snake.unshift(newHead);
     // Выводим лучший счет
-    if (score > bscore && lose) bscore = score;
     drawBestScore();
 }
 
+function createImg(srcc){
+    let img = new Image();
+    img.src = srcc;
+    return img;
+}
 
+function createSnake(){
+    snake = [];
+    snake[0] = {
+        x: 9* tile,
+        y: 10 * tile
+    } 
+}
+
+function newFruit(){
+    this.x = Math.floor((Math.random() * 17 + 1)) * tile;
+    this.y = Math.floor((Math.random() * 15 + 3)) * tile;
+    return this;
+}
 
 function moving(event){
     if(event.keyCode == 37 && temp != "right"){
@@ -90,17 +82,12 @@ function eatSnake(head, other){
 }
 
 function restart(event){
-    if (event.code == 'KeyC' && (event.ctrlKey || event.metaKey) && lose) {
-        clearInterval(snakeGame);
+    if (event.code == 'KeyZ' && (event.ctrlKey || event.metaKey) && lose) {
         lose = false;
         score = 0;
-        snake = [];
         temp = 0;
-        snake[0] = {
-            x: 9* tile,
-            y: 10 * tile
-        }   
-        snakeGame = setInterval(drawGame, 200);
+        createSnake();   
+        snakeGame = setInterval(drawGame, 100);
     }
 }
 
@@ -109,18 +96,21 @@ function loseGame(){
     lose = true;
 }
 
-function speedUp(){
-    clearInterval(snakeGame);
-    snakeGame = setInterval(drawGame, 100);
-}
-
 function drawScore(){
     ctx.fillStyle = "white";
     ctx.font = "50px sans-serif";
     ctx.fillText(score, tile * 2.5 , tile * 1.75);
 }
 
+function outOfBounds(){
+    if (snakeX < tile || snakeX > tile * 17 
+        || snakeY < 3 * tile || snakeY > 17 * tile) {
+            loseGame();
+    }
+}
+
 function drawBestScore(){
+    if (score > bscore && lose) bscore = score;
     ctx.fillStyle = "white";
     ctx.font = "40px sans-serif";
     ctx.fillText("BEST:", tile * 7 , tile * 1.5);
@@ -132,27 +122,30 @@ function nextPositionHead(){
     if (temp == "right") snakeX += tile;
     if (temp == "top") snakeY -= tile;
     if (temp == "buttom") snakeY += tile;
+    newHead = {
+        x: snakeX,
+        y: snakeY
+    }
 }
 
-function drawSnake(x, y, i){
-    ctx.fillStyle = i == 0 ? "green" : "#58c509";
-    ctx.fillRect(x, y, tile, tile);
+function drawSnake(snake){
+    for(let i = 0; i < snake.length; i++){
+        ctx.fillStyle = i == 0 ? "green" : "#58c509";
+        ctx.fillRect(snake[i].x, snake[i].y, tile, tile);
+    }
 }
-
 
 function eatFruit(snake, fruit){
     snakeX = snake[0].x;
     snakeY = snake[0].y;
     if (snakeX == fruit.x && snakeY == fruit.y){
         score++;
-        fruit = {
-            x: Math.floor((Math.random() * 17 + 1)) * tile,
-            y: Math.floor((Math.random() * 15 + 3)) * tile
-        }
+        fruit = newFruit();
     } else{
         snake.pop();
     }
-    return fruit;
 }
 
-let snakeGame = setInterval(drawGame, 200);
+document.addEventListener("keydown", moving);
+document.addEventListener("keydown", restart);
+let snakeGame = setInterval(drawGame, 100);
