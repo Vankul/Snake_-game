@@ -10,7 +10,6 @@ let bscore = 0;
 let temp;
 let snakeX;
 let snakeY;
-let newHead;
 let fruit = cretateFruit();
 let snake = createSnake();
 let snakeGame;
@@ -24,12 +23,12 @@ function drawGame() {
     drawScore();
     // Рисуем змею
     drawSnake(snake);
+    // Змея вышла за поле
+    checkOutOfBounds();
+    // Новое положение головы
+    let newHead = nextPositionHead();
     // Змея съела фрукт
     checkSnakeEatFruit(snake);
-    // Змея вышла за поле
-    outOfBounds();
-    // Новое положение головы
-    newHead = nextPositionHead();
     // Змея съела себя
     checkSnakeBiteSelf(newHead, snake);
     // Добавляем голову змеи
@@ -106,13 +105,6 @@ function drawScore(){
     ctx.fillText(score, tile * 2.5 , tile * 1.75);
 }
 
-function outOfBounds(){
-    if (snakeX < tile || snakeX > tile * 17 
-        || snakeY < 3 * tile || snakeY > 17 * tile) {
-            loseGame();
-    }
-}
-
 function drawBestScore(){
     if (score > bscore && lose) bscore = score;
     ctx.fillStyle = "white";
@@ -121,16 +113,7 @@ function drawBestScore(){
     ctx.fillText(bscore, tile * 10.5 , tile * 1.5);
 }
 
-function nextPositionHead(){
-    if (temp == "left") snakeX -= tile;
-    if (temp == "right") snakeX += tile;
-    if (temp == "top") snakeY -= tile;
-    if (temp == "buttom") snakeY += tile;
-    return {
-        x: snakeX,
-        y: snakeY
-    }
-}
+
 
 function drawSnake(snake){
     for(let i = 0; i < snake.length; i++){
@@ -140,14 +123,49 @@ function drawSnake(snake){
 }
 
 function checkSnakeEatFruit(snake){
-    snakeX = snake[0].x;
-    snakeY = snake[0].y;
-    if (snakeX == fruit.x && snakeY == fruit.y){
+    if (snake[0].x == fruit.x &&  snake[0].y == fruit.y){
         score++;
         fruit = cretateFruit();
     } else{
         snake.pop();
     }
+}
+
+function checkOutOfBounds(){
+    if (snake[0].x < tile || snake[0].x > tile * 17 
+        || snake[0].y < 3 * tile || snake[0].y > 17 * tile) {
+            loseGame();
+    }
+}
+
+function nextPositionHead(){
+    switch (temp) {
+        case "left": 
+            return{
+                x:snake[0].x - tile,
+                y:snake[0].y
+            }
+        case "right": 
+            return{
+                x:snake[0].x - tile,
+                y:snake[0].y
+            }
+        case "top": 
+            return{
+                x:snake[0].x,
+                y:snake[0].y - tile
+            }
+        case "buttom": 
+            return{
+                x:snake[0].x,
+                y:snake[0].y + tile
+            }
+        default:
+            return{
+                x:snake[0].x,
+                y:snake[0].y
+            }
+        }
 }
 
 document.addEventListener("keydown", moving);
