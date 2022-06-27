@@ -8,8 +8,6 @@ let score = 0;
 let lose = false;
 let bscore = 0;
 let temp;
-let snakeX;
-let snakeY;
 let fruit = cretateFruit();
 let snake = createSnake();
 let snakeGame;
