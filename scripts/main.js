@@ -145,7 +145,7 @@ function nextPositionHead(){
             }
         case "right": 
             return{
-                x:snake[0].x - tile,
+                x:snake[0].x + tile,
                 y:snake[0].y
             }
         case "top": 
